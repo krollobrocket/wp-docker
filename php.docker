@@ -1,43 +1,40 @@
 ARG PHP_VERSION=$PHP_VERSION
 
-FROM php:${PHP_VERSION}-fpm
+FROM php:${PHP_VERSION}-fpm-alpine3.16
 
 # Update and install packages.
-RUN apt-get update
-RUN apt-get install -y \
+RUN apk upgrade --update && \
+    apk add \
+    autoconf \
     less \
     curl \
-    nano \
-    zip \
-    zlib1g \
+    #zip \
+    zlib \
     gcc \
-    make \
-    libzip-dev \
+    #libzip-dev \
     libpng-dev \
-    libwebp-dev \
-    libfreetype-dev \
-    libjpeg62-turbo-dev
+    #libwebp-dev \
+    #freetype-dev \
+    libjpeg-turbo-dev
 
 # Configure and install GD extension.
-RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp && \
+RUN docker-php-ext-configure gd --enable-gd --with-freetype=no --with-jpeg --with-webp=no && \
     docker-php-ext-install gd
 
 # Install PDO extension.
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Install redis extension.
-RUN pecl install -o -f redis \
-    && rm -rf /tmp/pear \
-    && docker-php-ext-enable redis
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS \
+        && pecl install redis \
+        && docker-php-ext-enable redis.so
 
 # Install composer.
-RUN curl -s https://getcomposer.org/installer | php
-RUN mv composer.phar /usr/local/bin/composer
+RUN curl -s https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer
 
 # Install wp-cli and add it to our $PATH.
-RUN composer global require wp-cli/wp-cli
-ENV PATH "$PATH:/root/.composer/vendor/bin"
-RUN echo "alias wp=\"wp --allow-root\"" >> $HOME/.bashrc
+RUN composer global require wp-cli/wp-cli && \
+    echo "alias wp=\"wp --allow-root\"" >> $HOME/.bashrc
 
-# Enable mod rewrite.
-# RUN a2enmod rewrite
+ENV PATH "$PATH:/root/.composer/vendor/bin"
