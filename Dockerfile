@@ -5,6 +5,7 @@ FROM php:${PHP_VERSION}-apache
 # Update and install packages.
 RUN apt-get update
 RUN apt-get install -y \
+    less \
     curl \
     nano \
     zip \
@@ -33,8 +34,10 @@ RUN pecl install -o -f redis \
 RUN curl -s https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
-# Install wp-cli.
+# Install wp-cli and add it to our $PATH.
 RUN composer global require wp-cli/wp-cli
+ENV PATH "$PATH:/root/.composer/vendor/bin"
+RUN echo "alias wp=\"wp --allow-root\"" >> $HOME/.bashrc
 
 # Enable mod rewrite.
 RUN a2enmod rewrite
