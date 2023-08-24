@@ -1,13 +1,16 @@
 version: '3.0'
 services:
-  apache2:
-    image: httpd
+  httpd:
+    image: httpd:2.4-alpine
     volumes:
       - ./data:/usr/local/apache2/htdocs/
-      - ./docker-php.conf:/usr/local/apache2/conf/extra/docker-php.conf
-      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/conf/php.conf:/usr/local/apache2/conf/extra/php.conf
+      - ./httpd/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf
     ports:
       - 8080:80
+  nginx:
+    image: nginx
+    entrypoint: ["echo", "nginx is disabled"]
   php:
     build:
       context: .
@@ -16,7 +19,7 @@ services:
         PHP_VERSION: ${PHP_VERSION}
     volumes:
       - ./data:/usr/local/apache2/htdocs/
-      - ./php.ini:/usr/local/etc/php/php.ini
+      - ./php/php.ini:/usr/local/etc/php/php.ini
   redis:
     image: redis:3.2.0-alpine
     command: redis-server --appendonly yes
