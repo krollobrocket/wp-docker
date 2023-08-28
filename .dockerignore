@@ -1,6 +1,2 @@
-data/
-httpd/
-mysql/
-nginx/
-php/
-redis/
+.DS_Store
+services/*
