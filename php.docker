@@ -2,20 +2,23 @@ ARG PHP_VERSION=$PHP_VERSION
 
 FROM php:${PHP_VERSION}-fpm-alpine3.16
 
+ARG GD_FREE_TYPE=$GD_FREE_TYPE
+ARG GD_WEBP=$GD_WEBP
+
 # Update and install packages.
-RUN apk upgrade --update && \
-    apk add \
+RUN apk add \
     autoconf \
     less \
     curl \
-    #zip \
-    zlib \
-    gcc \
-    #libzip-dev \
     libpng-dev \
-    #libwebp-dev \
-    #freetype-dev \
     libjpeg-turbo-dev
+
+RUN if [[ "$GD_FREE_TYPE" = "1" ]]; then \
+    apk add freetype-dev; \
+    fi
+RUN if [[ "$GD_WEBP" = "1" ]]; then \
+    apk add libwebp-dev; \
+    fi
 
 # Configure and install GD extension.
 RUN docker-php-ext-configure gd --enable-gd --with-freetype=no --with-jpeg --with-webp=no && \
@@ -35,6 +38,10 @@ RUN curl -s https://getcomposer.org/installer | php && \
 
 # Install wp-cli and add it to our $PATH.
 RUN composer global require wp-cli/wp-cli && \
+    composer global require wp-cli/extension-command && \
+    composer global require wp-cli/cron-command && \
     echo "alias wp=\"wp --allow-root\"" >> $HOME/.bashrc
 
 ENV PATH "$PATH:/root/.composer/vendor/bin"
+
+WORKDIR /usr/local/apache2/htdocs

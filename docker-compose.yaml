@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   nginx:
     image: nginx
@@ -29,6 +28,8 @@ services:
       dockerfile: php.docker
       args:
         PHP_VERSION: ${PHP_VERSION}
+        GD_WEBP: ${GD_WEBP}
+        GD_FREE_TYPE: ${GD_FREE_TYPE}
     volumes:
       - ./data:/usr/local/apache2/htdocs/
       - ./services/php/php.ini:/usr/local/etc/php/php.ini
