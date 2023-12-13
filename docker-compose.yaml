@@ -14,7 +14,7 @@ services:
     image: httpd:2.4.57-alpine3.18
     hostname: apache
     volumes:
-      - ./data:/usr/local/apache2/htdocs/
+      - $ROOT_DIR:/usr/local/apache2/htdocs/
       - ./services/apache/conf/php.conf:/usr/local/apache2/conf/extra/php.conf
       - ./services/apache/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf
     ports:
@@ -31,7 +31,7 @@ services:
         GD_WEBP: ${GD_WEBP}
         GD_FREE_TYPE: ${GD_FREE_TYPE}
     volumes:
-      - ./data:/usr/local/apache2/htdocs/
+      - $ROOT_DIR:/usr/local/apache2/htdocs/
       - ./services/php/php.ini:/usr/local/etc/php/php.ini
   redis:
     image: redis:7.2.0-alpine3.18
