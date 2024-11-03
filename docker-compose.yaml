@@ -13,7 +13,7 @@ services:
     depends_on:
       - apache
   apache:
-    image: httpd:2.4.62-alpine3.20
+    image: httpd:2.4.62-alpine
     hostname: apache
     volumes:
       - $ROOT_DIR:/usr/local/apache2/htdocs/
@@ -36,7 +36,7 @@ services:
       - $ROOT_DIR:/usr/local/apache2/htdocs/
       - ./services/php/php.ini:/usr/local/etc/php/php.ini
   redis:
-    image: redis:7.4.0-alpine3.20
+    image: redis:7.4.0-alpine
     command: redis-server --appendonly yes
     volumes:
       - ./services/redis:/data

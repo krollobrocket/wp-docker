@@ -1,6 +1,6 @@
 ARG PHP_VERSION=$PHP_VERSION
 
-FROM php:${PHP_VERSION}-fpm-alpine3.16
+FROM php:${PHP_VERSION}-fpm-alpine
 
 ARG GD_FREE_TYPE=$GD_FREE_TYPE
 ARG GD_WEBP=$GD_WEBP
@@ -40,8 +40,9 @@ RUN curl -s https://getcomposer.org/installer | php && \
 RUN composer global require wp-cli/wp-cli && \
     composer global require wp-cli/extension-command && \
     composer global require wp-cli/cron-command && \
-    echo "alias wp=\"wp --allow-root\"" >> $HOME/.bashrc
+    echo "alias wp=\"wp --allow-root\"" >> /root/.bashrc
 
 ENV PATH "$PATH:/root/.composer/vendor/bin"
+ENV ENV=/root/.bashrc
 
 WORKDIR /usr/local/apache2/htdocs
