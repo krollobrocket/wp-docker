@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: nginx
+    image: nginx:1.31.3-alpine3.24-perl
     profiles:
       - dev
     volumes:
@@ -41,14 +41,14 @@ services:
     volumes:
       - ./services/redis:/data
   db:
-    image: yobasystems/alpine-mariadb
+    image: mariadb:12.3.2-ubi10
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - ./services/mysql:/var/lib/mysql
+      - ./services/mysql/:/var/lib/mysql
     ports:
       - "3306:3306"
